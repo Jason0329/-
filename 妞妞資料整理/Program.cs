@@ -12,20 +12,21 @@ namespace 妞妞資料整理
         static void Main(string[] args)
         {
            List<List<string>> RawData = new List<List<string>>();
-           StreamReader sr = new StreamReader("1月代購登記簿.csv" , Encoding.GetEncoding("big5"));
+           StreamReader sr = new StreamReader("代購登記簿.txt" );
+           StreamWriter sw = new StreamWriter("result.csv" ,false, Encoding.GetEncoding("utf-8"));
             
            while (!sr.EndOfStream)
            {
               string dataList = sr.ReadLine();
-              RawData.Add(dataList.Split(',').ToList());
+              RawData.Add(dataList.Split('\t').ToList());
            }
 
            for(int i=3; i<RawData.Count; i++)
            {
-                for(int j=4; i<RawData[i].Count; j++)
+                string OrderProduct = "";
+                for (int j=6; j<RawData[i].Count; j++)
                 {
-                    int BuyQuantitiy = 0;
-                    string OrderProduct = "";
+                    int BuyQuantitiy = 0;                   
                     if(RawData[i][j].CompareTo("")!=0)
                     {
                         try
@@ -34,16 +35,24 @@ namespace 妞妞資料整理
                         }
                         catch(Exception e)
                         {
+                            Console.WriteLine(RawData[i][j]);
                             Console.WriteLine(e.Message);
                         }
                     }
 
-                    OrderProduct += RawData[i][0] + " *";
+                    if (BuyQuantitiy != 0)
+                    {
+                        OrderProduct += RawData[0][j] +" "+ RawData[1][j] + "*" + BuyQuantitiy + "/r/n";
+                    }
 
                 }
+
+                string ResultWriteLine = RawData[i][2] +"," + OrderProduct;
+                sw.WriteLine(ResultWriteLine);
            }
 
            sr.Close();
+           sw.Close();
         }
     }
 }
